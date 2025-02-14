@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import InputBox from '../components/InputBox';
 import Button from '../components/Button';
@@ -7,6 +7,8 @@ import {useNavigation} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -25,6 +27,54 @@ const validationSchema = Yup.object().shape({
 
 const Signup = () => {
   const navigation = useNavigation();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+//   const handleSignup = async (values) => {
+//     // try {
+//     //   // Create user with email & password in Firebase Auth
+//     //   const userCredential = await auth().createUserWithEmailAndPassword(values.email, values.password);
+//     //   const user = userCredential.user;
+
+//     //   // Store additional user info in Firestore
+//     //   await firestore().collection('users').doc(user.uid).set({
+//     //     uid: user.uid,
+//     //     name: values.name,
+//     //     email: values.email,
+//     //     phoneno: values.phoneno,
+//     //     createdAt: firestore.FieldValue.serverTimestamp(),
+//     //   });
+
+//     //   Alert.alert('Success', 'Account created successfully');
+//     //   navigation.navigate('Login');
+//     // } catch (error) {
+//     //   Alert.alert('Error', error.message);
+//     // }
+//   };
+
+const handleRegister = async (values) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const userCredential = await auth().createUserWithEmailAndPassword(values.email, values.password);
+      const userId = userCredential.user.uid;
+
+      await firestore().collection('users').doc(userId).set({
+        name: values.name,
+        email: values.email,
+        phoneno: values.phoneno,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+      });
+
+      Alert.alert('Registration successful! Please log in.');
+      navigation.navigate('Login');  // Navigate to login screen
+    } catch (err) {
+      setError(err.message);
+    }
+
+    setLoading(false);
+  };
 
   return (
     <ScrollView>
@@ -43,11 +93,9 @@ const Signup = () => {
       </View>
 
       <Formik
-        initialValues={{email: '', password: ''}}
+        initialValues={{email: '', password: '', phoneno:'', name:''}}
         validationSchema={validationSchema}
-        onSubmit={values => {
-          console.log('Form Data:', values);
-        }}>
+        onSubmit={handleRegister}>
         {({
           handleChange,
           handleBlur,

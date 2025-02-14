@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "280242158168",
+    "project_id": "receipeapp-63e6f",
+    "storage_bucket": "receipeapp-63e6f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280242158168:android:c7cfaffcab986418e6282d",
+        "android_client_info": {
+          "package_name": "com.cratereceipeapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2nL5pItXPyZkF_p3axZekkc8JEfUR1-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

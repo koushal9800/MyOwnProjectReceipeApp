@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import InputBox from '../components/InputBox';
 import Button from '../components/Button';
@@ -6,6 +6,8 @@ import AuthButton from '../components/AuthButton';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from "formik";
 import * as Yup from "yup";
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const validationSchema = Yup.object().shape({
     
@@ -20,6 +22,22 @@ const validationSchema = Yup.object().shape({
 const Login = () => {
 
 const navigation  = useNavigation()
+const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+const handleLogin = async (values) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      await auth().signInWithEmailAndPassword(values.email, values.password);
+      navigation.navigate('Home')
+    } catch (err) {
+      setError(err.message);
+    }
+
+    setLoading(false);
+  };
 
   return (
     <View>
@@ -40,9 +58,7 @@ const navigation  = useNavigation()
       <Formik
       initialValues={{email: "", password: "" }}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
-        console.log("Form Data:", values);
-      }}
+      onSubmit={handleLogin}
     >
 {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
       <View style={styles.inputBoxContainer}>
